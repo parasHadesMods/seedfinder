@@ -92,19 +92,15 @@ ROOMS = [
   "A_Combat06",
   "A_Combat07",
   "A_Combat08A",
-  "A_Combat08B",
   "A_Combat09",
   "A_Combat10",
-  "A_Combat11",
   "A_Combat12",
   "A_Combat13",
   "A_Combat14",
   "A_Combat15",
   "A_Combat16",
-  "A_Combat17",
-  "A_Combat18",
   "A_Combat19",
-  "A_Combat20",
+  "A_Combat21",
   "A_Combat24"
 ]
 REWARDS = [
