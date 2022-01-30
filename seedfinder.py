@@ -163,6 +163,7 @@ C2_SEED = Cell()
 C3_SEED = Cell()
 C4_SEED = Cell()
 
+
 def join_cells(*args):
     non_null_args = [x.gets() for x in args if x.gets()]
     return "+".join(sorted(non_null_args))
@@ -419,8 +420,7 @@ ELEMENTS = [
         "Predicate": lambda: C4_EXIT_REWARD_1.gets() and C4_WAVE_1_ENEMY_1.gets(),
         "Function": get_seeds,
     },
-    {"Type": "Label",
-     "GetCurrent": C4_SEED.gets},
+    {"Type": "Label", "GetCurrent": C4_SEED.gets},
 ]
 
 if __name__ == "__main__":
