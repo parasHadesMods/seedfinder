@@ -109,7 +109,7 @@ ROOMS = [
     "A_Combat21",
     "A_Combat24",
 ]
-REWARDS = [
+RUN_REWARDS = [
     "ArtemisUpgrade",
     "AresUpgrade",
     "AthenaUpgrade",
@@ -118,6 +118,7 @@ REWARDS = [
     "RoomRewardMoneyDrop",
     "StackUpgrade",
 ]
+META_REWARDS = ["LockKeyDrop", "RoomRewardMetaPointDrop"]
 
 
 class Cell:
@@ -133,8 +134,6 @@ class Cell:
 
 C2_EXIT_REWARD = Cell()
 C3_ROOM_NAME = Cell()
-C3_EXIT_REWARD_1 = Cell()
-C3_EXIT_REWARD_2 = Cell()
 C3_WAVE_1_ENEMY_1 = Cell()
 C3_WAVE_1_ENEMY_2 = Cell()
 C3_WAVE_1_ENEMY_3 = Cell()
@@ -144,6 +143,21 @@ C3_WAVE_2_ENEMY_3 = Cell()
 C3_WAVE_3_ENEMY_1 = Cell()
 C3_WAVE_3_ENEMY_2 = Cell()
 C3_WAVE_3_ENEMY_3 = Cell()
+C3_EXIT_REWARD_1 = Cell()
+C3_EXIT_REWARD_2 = Cell()
+C3_DOOR_CHOSEN = Cell()
+C4_ROOM_NAME = Cell()
+C4_WAVE_1_ENEMY_1 = Cell()
+C4_WAVE_1_ENEMY_2 = Cell()
+C4_WAVE_1_ENEMY_3 = Cell()
+C4_WAVE_2_ENEMY_1 = Cell()
+C4_WAVE_2_ENEMY_2 = Cell()
+C4_WAVE_2_ENEMY_3 = Cell()
+C4_WAVE_3_ENEMY_1 = Cell()
+C4_WAVE_3_ENEMY_2 = Cell()
+C4_WAVE_3_ENEMY_3 = Cell()
+C4_EXIT_REWARD_1 = Cell()
+C4_EXIT_REWARD_2 = Cell()
 
 
 def join_cells(*args):
@@ -162,8 +176,7 @@ def get_seeds():
         wave_1 = join_cells(C3_WAVE_1_ENEMY_1, C3_WAVE_1_ENEMY_2, C3_WAVE_1_ENEMY_3)
         wave_2 = join_cells(C3_WAVE_2_ENEMY_1, C3_WAVE_2_ENEMY_2, C3_WAVE_2_ENEMY_3)
         wave_3 = join_cells(C3_WAVE_3_ENEMY_1, C3_WAVE_3_ENEMY_2, C3_WAVE_3_ENEMY_3)
-        if wave_1:
-            data = data[data["C3_Wave_1"] == wave_1]
+        data = data[data["C3_Wave_1"] == wave_1]
         if wave_2:
             data = data[data["C3_Wave_2"] == wave_2]
         else:
@@ -172,6 +185,23 @@ def get_seeds():
             data = data[data["C3_Wave_3"] == wave_3]
         else:
             data = data[data["C3_Wave_3"].isna()]
+        data = data[data["C3_Exit_Chosen"] == C3_DOOR_CHOSEN.gets()]
+        data = data[data["C4_Room_Name"] == C4_ROOM_NAME.gets()]
+        data = data[
+            data["C4_Exit_Rewards"] == join_cells(C4_EXIT_REWARD_1, C4_EXIT_REWARD_2)
+        ]
+        wave_1 = join_cells(C4_WAVE_1_ENEMY_1, C4_WAVE_1_ENEMY_2, C4_WAVE_1_ENEMY_3)
+        wave_2 = join_cells(C4_WAVE_2_ENEMY_1, C4_WAVE_2_ENEMY_2, C4_WAVE_2_ENEMY_3)
+        wave_3 = join_cells(C4_WAVE_3_ENEMY_1, C4_WAVE_3_ENEMY_2, C4_WAVE_3_ENEMY_3)
+        data = data[data["C4_Wave_1"] == wave_1]
+        if wave_2:
+            data = data[data["C4_Wave_2"] == wave_2]
+        else:
+            data = data[data["C4_Wave_2"].isna()]
+        if wave_3:
+            data = data[data["C4_Wave_3"] == wave_3]
+        else:
+            data = data[data["C4_Wave_3"].isna()]
         print(data)
 
 
@@ -181,7 +211,7 @@ ELEMENTS = [
         "Prompt": "C2 Exit Reward",
         "GetCurrent": C2_EXIT_REWARD.gets,
         "OnSelect": C2_EXIT_REWARD.sets,
-        "GetOptions": lambda: ["LockKeyDrop", "RoomRewardMetaPointDrop"],
+        "GetOptions": lambda: META_REWARDS,
     },
     {
         "Type": "Combo",
@@ -265,20 +295,121 @@ ELEMENTS = [
         "Prompt": "C3 Exit Reward",
         "GetCurrent": C3_EXIT_REWARD_1.gets,
         "OnSelect": C3_EXIT_REWARD_1.sets,
-        "GetOptions": lambda: REWARDS if C3_ROOM_NAME.gets() else [],
+        "GetOptions": lambda: RUN_REWARDS if C3_ROOM_NAME.gets() else [],
     },
     {
         "Type": "Combo",
         "Prompt": "C3 Exit Reward",
         "GetCurrent": C3_EXIT_REWARD_2.gets,
         "OnSelect": C3_EXIT_REWARD_2.sets,
-        "GetOptions": lambda: REWARDS if C3_ROOM_NAME.gets() else [],
+        "GetOptions": lambda: RUN_REWARDS if C3_ROOM_NAME.gets() else [],
+    },
+    {"Type": "RowEnd"},
+    {
+        "Type": "Combo",
+        "Prompt": "Door Chosen",
+        "GetCurrent": C3_DOOR_CHOSEN.gets,
+        "OnSelect": C3_DOOR_CHOSEN.sets,
+        "GetOptions": lambda: RUN_REWARDS
+        if C3_EXIT_REWARD_1.gets() and C3_WAVE_1_ENEMY_1.gets()
+        else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "C4 Room Name",
+        "GetCurrent": C4_ROOM_NAME.gets,
+        "OnSelect": C4_ROOM_NAME.sets,
+        "GetOptions": lambda: ROOMS if C3_DOOR_CHOSEN.gets() else [],
+    },
+    {"Type": "RowStart"},
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 1 Enemy",
+        "GetCurrent": C4_WAVE_1_ENEMY_1.gets,
+        "OnSelect": C4_WAVE_1_ENEMY_1.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 1 Enemy",
+        "GetCurrent": C4_WAVE_1_ENEMY_2.gets,
+        "OnSelect": C4_WAVE_1_ENEMY_2.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 1 Enemy",
+        "GetCurrent": C4_WAVE_1_ENEMY_3.gets,
+        "OnSelect": C4_WAVE_1_ENEMY_3.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {"Type": "RowEnd"},
+    {"Type": "RowStart"},
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 2 Enemy",
+        "GetCurrent": C4_WAVE_2_ENEMY_1.gets,
+        "OnSelect": C4_WAVE_2_ENEMY_1.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 2 Enemy",
+        "GetCurrent": C4_WAVE_2_ENEMY_2.gets,
+        "OnSelect": C4_WAVE_2_ENEMY_2.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 2 Enemy",
+        "GetCurrent": C4_WAVE_2_ENEMY_3.gets,
+        "OnSelect": C4_WAVE_2_ENEMY_3.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {"Type": "RowEnd"},
+    {"Type": "RowStart"},
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 3 Enemy",
+        "GetCurrent": C4_WAVE_3_ENEMY_1.gets,
+        "OnSelect": C4_WAVE_3_ENEMY_1.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 3 Enemy",
+        "GetCurrent": C4_WAVE_3_ENEMY_2.gets,
+        "OnSelect": C4_WAVE_3_ENEMY_2.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "Wave 3 Enemy",
+        "GetCurrent": C4_WAVE_3_ENEMY_3.gets,
+        "OnSelect": C4_WAVE_3_ENEMY_3.sets,
+        "GetOptions": lambda: ENEMIES if C4_ROOM_NAME.gets() else [],
+    },
+    {"Type": "RowEnd"},
+    {"Type": "RowStart"},
+    {
+        "Type": "Combo",
+        "Prompt": "C4 Exit Reward",
+        "GetCurrent": C4_EXIT_REWARD_1.gets,
+        "OnSelect": C4_EXIT_REWARD_1.sets,
+        "GetOptions": lambda: META_REWARDS if C4_ROOM_NAME.gets() else [],
+    },
+    {
+        "Type": "Combo",
+        "Prompt": "C4 Exit Reward",
+        "GetCurrent": C4_EXIT_REWARD_2.gets,
+        "OnSelect": C4_EXIT_REWARD_2.sets,
+        "GetOptions": lambda: META_REWARDS if C4_ROOM_NAME.gets() else [],
     },
     {"Type": "RowEnd"},
     {
         "Type": "Button",
         "Text": "Get Seeds",
-        "Predicate": lambda: C3_EXIT_REWARD_1.gets() and C3_WAVE_1_ENEMY_1.gets(),
+        "Predicate": lambda: C4_EXIT_REWARD_1.gets() and C4_WAVE_1_ENEMY_1.gets(),
         "Function": get_seeds,
     },
 ]
