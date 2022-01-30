@@ -158,7 +158,10 @@ C4_WAVE_3_ENEMY_2 = Cell()
 C4_WAVE_3_ENEMY_3 = Cell()
 C4_EXIT_REWARD_1 = Cell()
 C4_EXIT_REWARD_2 = Cell()
-
+C1_SEED = Cell()
+C2_SEED = Cell()
+C3_SEED = Cell()
+C4_SEED = Cell()
 
 def join_cells(*args):
     non_null_args = [x.gets() for x in args if x.gets()]
@@ -203,6 +206,10 @@ def get_seeds():
         else:
             data = data[data["C4_Wave_3"].isna()]
         print(data)
+        C1_SEED.sets(data["C1_Seed"].iloc[0])
+        C2_SEED.sets(data["C2_Seed"].iloc[0])
+        C3_SEED.sets(data["C3_Seed"].iloc[0])
+        C4_SEED.sets(data["C4_Seed"].iloc[0])
 
 
 ELEMENTS = [
@@ -408,10 +415,12 @@ ELEMENTS = [
     {"Type": "RowEnd"},
     {
         "Type": "Button",
-        "Text": "Get Seeds",
+        "Text": "Get Seed",
         "Predicate": lambda: C4_EXIT_REWARD_1.gets() and C4_WAVE_1_ENEMY_1.gets(),
         "Function": get_seeds,
     },
+    {"Type": "Label",
+     "GetCurrent": C4_SEED.gets},
 ]
 
 if __name__ == "__main__":
