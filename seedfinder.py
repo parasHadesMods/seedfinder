@@ -1,6 +1,6 @@
 import pandas
 import tkinter
-import os
+import subprocess
 
 
 class ButtonItem:
@@ -163,6 +163,7 @@ C1_SEED = Cell()
 C2_SEED = Cell()
 C3_SEED = Cell()
 C4_SEED = Cell()
+PREDICTION = Cell()
 
 
 def join_cells(*args):
@@ -221,8 +222,8 @@ def predict():
                 (data["C4_Seed"] == C4_SEED.gets())]
     with open("run_for_prediction.json", "w") as j:
         j.write(data.iloc[0].to_json())
-    os.system("""cd ../routefinder && ./target/release/routefinder -s ~/legendary/Hades/Content/Scripts -f FreshFile.sav FreshFilePredict.lua""")
-
+    result = subprocess.run("""cd ../routefinder && ./target/release/routefinder -s ~/legendary/Hades/Content/Scripts -f FreshFile.sav FreshFilePredict.lua""", shell=True, capture_output=True)
+    PREDICTION.sets(result.stdout)
 
 ELEMENTS = [
     {
@@ -438,6 +439,7 @@ ELEMENTS = [
         "Predicate": C4_SEED.gets,
         "Function": predict,
     },
+    {"Type": "Label", "GetCurrent": PREDICTION.gets},
 ]
 
 if __name__ == "__main__":
