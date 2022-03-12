@@ -1,5 +1,6 @@
 import pandas
 import tkinter
+import os
 
 
 class ButtonItem:
@@ -220,6 +221,9 @@ def predict():
                     (data["C4_Seed"] == C4_SEED.gets())]
         with open("run_for_prediction.json", "w") as j:
             j.write(data.iloc[0].to_json())
+        os.system("""cd ../routefinder && ./target/release/routefinder -s ~/legendary/Hades/Content/Scripts -f FreshFile.sav FreshFilePredict.lua""")
+
+
 
 ELEMENTS = [
     {
