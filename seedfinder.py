@@ -170,59 +170,58 @@ def join_cells(*args):
     return "+".join(sorted(non_null_args))
 
 
+RAW_DATA = None
+
 def get_seeds():
-    with open("freshfile.csv") as f:
-        data = pandas.read_csv(f)
-        data = data[data["C2_Exit_Reward"] == C2_EXIT_REWARD.gets()]
-        data = data[data["C3_Room_Name"] == C3_ROOM_NAME.gets()]
-        data = data[
-            data["C3_Exit_Rewards"] == join_cells(C3_EXIT_REWARD_1, C3_EXIT_REWARD_2)
-        ]
-        wave_1 = join_cells(C3_WAVE_1_ENEMY_1, C3_WAVE_1_ENEMY_2, C3_WAVE_1_ENEMY_3)
-        wave_2 = join_cells(C3_WAVE_2_ENEMY_1, C3_WAVE_2_ENEMY_2, C3_WAVE_2_ENEMY_3)
-        wave_3 = join_cells(C3_WAVE_3_ENEMY_1, C3_WAVE_3_ENEMY_2, C3_WAVE_3_ENEMY_3)
-        data = data[data["C3_Wave_1"] == wave_1]
-        if wave_2:
-            data = data[data["C3_Wave_2"] == wave_2]
-        else:
-            data = data[data["C3_Wave_2"].isna()]
-        if wave_3:
-            data = data[data["C3_Wave_3"] == wave_3]
-        else:
-            data = data[data["C3_Wave_3"].isna()]
-        data = data[data["C3_Exit_Chosen"] == C3_DOOR_CHOSEN.gets()]
-        data = data[data["C4_Room_Name"] == C4_ROOM_NAME.gets()]
-        data = data[
-            data["C4_Exit_Rewards"] == join_cells(C4_EXIT_REWARD_1, C4_EXIT_REWARD_2)
-        ]
-        wave_1 = join_cells(C4_WAVE_1_ENEMY_1, C4_WAVE_1_ENEMY_2, C4_WAVE_1_ENEMY_3)
-        wave_2 = join_cells(C4_WAVE_2_ENEMY_1, C4_WAVE_2_ENEMY_2, C4_WAVE_2_ENEMY_3)
-        wave_3 = join_cells(C4_WAVE_3_ENEMY_1, C4_WAVE_3_ENEMY_2, C4_WAVE_3_ENEMY_3)
-        data = data[data["C4_Wave_1"] == wave_1]
-        if wave_2:
-            data = data[data["C4_Wave_2"] == wave_2]
-        else:
-            data = data[data["C4_Wave_2"].isna()]
-        if wave_3:
-            data = data[data["C4_Wave_3"] == wave_3]
-        else:
-            data = data[data["C4_Wave_3"].isna()]
-        C1_SEED.sets(data["C1_Seed"].iloc[0])
-        C2_SEED.sets(data["C2_Seed"].iloc[0])
-        C3_SEED.sets(data["C3_Seed"].iloc[0])
-        C4_SEED.sets(data["C4_Seed"].iloc[0])
+    data = RAW_DATA
+    data = data[data["C2_Exit_Reward"] == C2_EXIT_REWARD.gets()]
+    data = data[data["C3_Room_Name"] == C3_ROOM_NAME.gets()]
+    data = data[
+        data["C3_Exit_Rewards"] == join_cells(C3_EXIT_REWARD_1, C3_EXIT_REWARD_2)
+    ]
+    wave_1 = join_cells(C3_WAVE_1_ENEMY_1, C3_WAVE_1_ENEMY_2, C3_WAVE_1_ENEMY_3)
+    wave_2 = join_cells(C3_WAVE_2_ENEMY_1, C3_WAVE_2_ENEMY_2, C3_WAVE_2_ENEMY_3)
+    wave_3 = join_cells(C3_WAVE_3_ENEMY_1, C3_WAVE_3_ENEMY_2, C3_WAVE_3_ENEMY_3)
+    data = data[data["C3_Wave_1"] == wave_1]
+    if wave_2:
+        data = data[data["C3_Wave_2"] == wave_2]
+    else:
+        data = data[data["C3_Wave_2"].isna()]
+    if wave_3:
+        data = data[data["C3_Wave_3"] == wave_3]
+    else:
+        data = data[data["C3_Wave_3"].isna()]
+    data = data[data["C3_Exit_Chosen"] == C3_DOOR_CHOSEN.gets()]
+    data = data[data["C4_Room_Name"] == C4_ROOM_NAME.gets()]
+    data = data[
+        data["C4_Exit_Rewards"] == join_cells(C4_EXIT_REWARD_1, C4_EXIT_REWARD_2)
+    ]
+    wave_1 = join_cells(C4_WAVE_1_ENEMY_1, C4_WAVE_1_ENEMY_2, C4_WAVE_1_ENEMY_3)
+    wave_2 = join_cells(C4_WAVE_2_ENEMY_1, C4_WAVE_2_ENEMY_2, C4_WAVE_2_ENEMY_3)
+    wave_3 = join_cells(C4_WAVE_3_ENEMY_1, C4_WAVE_3_ENEMY_2, C4_WAVE_3_ENEMY_3)
+    data = data[data["C4_Wave_1"] == wave_1]
+    if wave_2:
+        data = data[data["C4_Wave_2"] == wave_2]
+    else:
+        data = data[data["C4_Wave_2"].isna()]
+    if wave_3:
+        data = data[data["C4_Wave_3"] == wave_3]
+    else:
+        data = data[data["C4_Wave_3"].isna()]
+    C1_SEED.sets(data["C1_Seed"].iloc[0])
+    C2_SEED.sets(data["C2_Seed"].iloc[0])
+    C3_SEED.sets(data["C3_Seed"].iloc[0])
+    C4_SEED.sets(data["C4_Seed"].iloc[0])
 
 def predict():
-    with open("freshfile.csv") as f:
-        data = pandas.read_csv(f)
-        data = data[(data["C1_Seed"] == C1_SEED.gets()) &
-                    (data["C2_Seed"] == C2_SEED.gets()) &
-                    (data["C3_Seed"] == C3_SEED.gets()) &
-                    (data["C4_Seed"] == C4_SEED.gets())]
-        with open("run_for_prediction.json", "w") as j:
-            j.write(data.iloc[0].to_json())
-        os.system("""cd ../routefinder && ./target/release/routefinder -s ~/legendary/Hades/Content/Scripts -f FreshFile.sav FreshFilePredict.lua""")
-
+    data = RAW_DATA
+    data = data[(data["C1_Seed"] == C1_SEED.gets()) &
+                (data["C2_Seed"] == C2_SEED.gets()) &
+                (data["C3_Seed"] == C3_SEED.gets()) &
+                (data["C4_Seed"] == C4_SEED.gets())]
+    with open("run_for_prediction.json", "w") as j:
+        j.write(data.iloc[0].to_json())
+    os.system("""cd ../routefinder && ./target/release/routefinder -s ~/legendary/Hades/Content/Scripts -f FreshFile.sav FreshFilePredict.lua""")
 
 
 ELEMENTS = [
@@ -442,6 +441,8 @@ ELEMENTS = [
 ]
 
 if __name__ == "__main__":
+    with open("freshfile.csv") as f:
+        RAW_DATA = pandas.read_csv(f)
     window = tkinter.Tk()
     window.title("Fresh File Seed Finder")
     window.attributes("-topmost", True)
@@ -485,12 +486,6 @@ if __name__ == "__main__":
             to_pack.grid(row=0, column=column, sticky="news")
             parent.grid_columnconfigure(column, weight=1, uniform="group1")
             column += 1
-
-    # testing
-    #C1_SEED.sets(15850699)
-    #C2_SEED.sets(1925243695)
-    #C3_SEED.sets(-1469705126)
-    #C4_SEED.sets(-521629406)
 
     refresh()
     window.mainloop()
