@@ -487,12 +487,10 @@ if __name__ == "__main__":
             column += 1
 
     # testing
-    C1_SEED.sets(15850699)
-    C2_SEED.sets(1925243695)
-    C3_SEED.sets(-1469705126)
-    C4_SEED.sets(-521629406)
-    print(C4_SEED.gets())
-    print(C4_SEED.gets() and True)
+    #C1_SEED.sets(15850699)
+    #C2_SEED.sets(1925243695)
+    #C3_SEED.sets(-1469705126)
+    #C4_SEED.sets(-521629406)
 
     refresh()
     window.mainloop()
