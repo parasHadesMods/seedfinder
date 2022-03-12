@@ -206,12 +206,20 @@ def get_seeds():
             data = data[data["C4_Wave_3"] == wave_3]
         else:
             data = data[data["C4_Wave_3"].isna()]
-        print(data)
         C1_SEED.sets(data["C1_Seed"].iloc[0])
         C2_SEED.sets(data["C2_Seed"].iloc[0])
         C3_SEED.sets(data["C3_Seed"].iloc[0])
         C4_SEED.sets(data["C4_Seed"].iloc[0])
 
+def predict():
+    with open("freshfile.csv") as f:
+        data = pandas.read_csv(f)
+        data = data[(data["C1_Seed"] == C1_SEED.gets()) &
+                    (data["C2_Seed"] == C2_SEED.gets()) &
+                    (data["C3_Seed"] == C3_SEED.gets()) &
+                    (data["C4_Seed"] == C4_SEED.gets())]
+        with open("run_for_prediction.json", "w") as j:
+            j.write(data.iloc[0].to_json())
 
 ELEMENTS = [
     {
@@ -421,6 +429,12 @@ ELEMENTS = [
         "Function": get_seeds,
     },
     {"Type": "Label", "GetCurrent": C4_SEED.gets},
+    {
+        "Type": "Button",
+        "Text": "Predict",
+        "Predicate": C4_SEED.gets,
+        "Function": predict,
+    },
 ]
 
 if __name__ == "__main__":
@@ -468,6 +482,13 @@ if __name__ == "__main__":
             parent.grid_columnconfigure(column, weight=1, uniform="group1")
             column += 1
 
-    refresh()
+    # testing
+    C1_SEED.sets(15850699)
+    C2_SEED.sets(1925243695)
+    C3_SEED.sets(-1469705126)
+    C4_SEED.sets(-521629406)
+    print(C4_SEED.gets())
+    print(C4_SEED.gets() and True)
 
+    refresh()
     window.mainloop()
