@@ -89,6 +89,7 @@ ENEMIES = [
     "HeavyMelee",
     "LightRanged",
     "PunchingBagUnit",
+    ""
 ]
 ROOMS = [
     "A_Combat01",
@@ -209,10 +210,13 @@ def get_seeds():
         data = data[data["C4_Wave_3"] == wave_3]
     else:
         data = data[data["C4_Wave_3"].isna()]
-    C1_SEED.sets(data["C1_Seed"].iloc[0])
-    C2_SEED.sets(data["C2_Seed"].iloc[0])
-    C3_SEED.sets(data["C3_Seed"].iloc[0])
-    C4_SEED.sets(data["C4_Seed"].iloc[0])
+    try:
+        C1_SEED.sets(data["C1_Seed"].iloc[0])
+        C2_SEED.sets(data["C2_Seed"].iloc[0])
+        C3_SEED.sets(data["C3_Seed"].iloc[0])
+        C4_SEED.sets(data["C4_Seed"].iloc[0])
+    except IndexError:
+        C4_SEED.sets("Unknown")
 
 def predict():
     data = RAW_DATA
@@ -436,7 +440,7 @@ ELEMENTS = [
     {
         "Type": "Button",
         "Text": "Predict",
-        "Predicate": C4_SEED.gets,
+        "Predicate": lambda: C4_SEED.gets() and C4_SEED.gets() != "Unknown",
         "Function": predict,
     },
     {"Type": "Label", "GetCurrent": PREDICTION.gets},
